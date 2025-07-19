@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 from dataclasses import dataclass
 
 
+# WarThunderStats is general stats class, not detailed stat per game mode
 @dataclass
 class WarThunderStats:
     victories: str
@@ -88,8 +89,15 @@ def visit_user_page(player_link):
     )
     html = driver.page_source
     soup = BeautifulSoup(html, "html.parser")
+    # TODO: parse each section of stats page in its own function,
+    # create data classes for each section if appropriate
+
+    # css class for realistic battles, air and ground combined
+    # stats structure is same for sim and arcade
     ul = soup.find("ul", class_="user-stat__list historyFightTab")
     li_list = ul.find_all("li")
+
+    # each li has no distinct css class, so just indexing
     realistic_stats = WarThunderStats(
         li_list[1].text,
         li_list[2].text,
