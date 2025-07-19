@@ -3,8 +3,20 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import undetected_chromedriver as uc
 from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium_stealth import stealth
+from dataclasses import dataclass
+
+
+@dataclass
+class WarThunderStats:
+    victories: str
+    completed_missions: str
+    winrate: str
+    deaths: str
+    lions_earned: str
+    play_time: str
+    air_targets_destroyed: str
+    ground_targets_destroyed: str
+    naval_targets_destroyed: str
 
 
 BASE_URL = "https://warthunder.com"
@@ -32,6 +44,7 @@ def get_player_link(name):
             link = unit.get("href")
             nick = unit.text.strip()
             links_map[nick] = link
+    driver.close()
     return links_map
 
 
@@ -64,6 +77,34 @@ def get_user_pick(range):
             print("\nOnly correct numbers allowed, try again.")
 
 
+def visit_user_page(player_link):
+    driver = uc.Chrome(headless=False)
+
+    driver.get(BASE_URL + player_link)
+
+    wait = WebDriverWait(driver, 15)  # Maximum wait time of 15 seconds
+    element = wait.until(
+        EC.visibility_of_element_located((By.CLASS_NAME, "user-profile__data-nick"))
+    )
+    html = driver.page_source
+    soup = BeautifulSoup(html, "html.parser")
+    ul = soup.find("ul", class_="user-stat__list historyFightTab")
+    li_list = ul.find_all("li")
+    realistic_stats = WarThunderStats(
+        li_list[1].text,
+        li_list[2].text,
+        li_list[3].text,
+        li_list[4].text,
+        li_list[5].text,
+        li_list[6].text,
+        li_list[7].text,
+        li_list[8].text,
+        li_list[9].text,
+    )
+    return realistic_stats
+
+
 if __name__ == "__main__":
     choice = get_player_link("ztdd")
-    print(get_correct_name(choice))
+    link = get_correct_name(choice)
+    print(visit_user_page(link))
