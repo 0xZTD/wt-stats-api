@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Optional
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -8,6 +9,12 @@ from dataclasses import dataclass
 
 
 # --- Data Structures ---
+class GameMode(Enum):
+    ARCADE = "arcade"
+    REALISTIC = "realistic"
+    SIM = "simualtion"
+
+
 # WarThunderStats is general stats class, not detailed stat per game mode
 @dataclass
 class WarThunderStats:
@@ -20,6 +27,7 @@ class WarThunderStats:
     air_targets_destroyed: str
     ground_targets_destroyed: str
     naval_targets_destroyed: str
+    game_mode: Optional[GameMode] = None
 
 
 @dataclass
@@ -36,6 +44,7 @@ class AirBattleStats:
     air_targets_destroyed: str
     ground_targets_destroyed: str
     naval_targets_destroyed: str
+    game_mode: Optional[GameMode] = None
 
 
 @dataclass
@@ -54,6 +63,7 @@ class GroundBattleStats:
     air_targets_destroyed: str
     ground_targets_destroyed: str
     naval_targets_destroyed: str
+    game_mode: Optional[GameMode] = None
 
 
 @dataclass
@@ -78,6 +88,7 @@ class NavalBattleStats:
     air_targets_destroyed: str
     ground_targets_destroyed: str
     naval_targets_destroyed: str
+    game_mode: Optional[GameMode] = None
 
 
 @dataclass
@@ -186,8 +197,11 @@ def visit_user_page(player_link):
 
     stats = []
     arcade_stats = get_user_stat(StatTabs.ARCADE, html)
+    arcade_stats.game_mode = GameMode.ARCADE
     realistic_stats = get_user_stat(StatTabs.REALISTIC, html)
+    realistic_stats.game_mode = GameMode.REALISTIC
     sim_stats = get_user_stat(StatTabs.SIM, html)
+    sim_stats.game_mode = GameMode.SIM
     ground_stats = get_ground_stats(html)
     air_stats = get_air_stats(html)
     naval_stats = get_naval_stats(html)
@@ -225,16 +239,93 @@ def get_air_stats(html):
                 li_list[11].text,
             )
         )
-
+    stats[0].game_mode = GameMode.ARCADE
+    stats[1].game_mode = GameMode.REALISTIC
+    stats[2].game_mode = GameMode.SIM
     return stats
 
 
 def get_ground_stats(html):
-    pass
+    soup = BeautifulSoup(html, "html.parser")
+    div = soup.find("div", class_="user-rate__fightType")
+    current_div = div.find_all("div", class_="user-stat__list-row")[1]
+
+    arcade_li = current_div.find("ul", class_=StatTabs.ARCADE.value).find_all("li")
+    realistic_li = current_div.find("ul", class_=StatTabs.REALISTIC.value).find_all(
+        "li"
+    )
+    sim_li = current_div.find("ul", class_=StatTabs.SIM.value).find_all("li")
+
+    lists = [arcade_li, realistic_li, sim_li]
+    stats = []
+    for li_list in lists:
+        stats.append(
+            GroundBattleStats(
+                li_list[0].text,
+                li_list[1].text,
+                li_list[2].text,
+                li_list[3].text,
+                li_list[4].text,
+                li_list[5].text,
+                li_list[6].text,
+                li_list[7].text,
+                li_list[8].text,
+                li_list[9].text,
+                li_list[10].text,
+                li_list[11].text,
+                li_list[12].text,
+                li_list[13].text,
+            )
+        )
+    stats[0].game_mode = GameMode.ARCADE
+    stats[1].game_mode = GameMode.REALISTIC
+    stats[2].game_mode = GameMode.SIM
+    return stats
 
 
 def get_naval_stats(html):
-    pass
+    soup = BeautifulSoup(html, "html.parser")
+    div = soup.find("div", class_="user-rate__fightType")
+    current_div = div.find_all("div", class_="user-stat__list-row")[2]
+
+    arcade_li = current_div.find("ul", class_=StatTabs.ARCADE.value).find_all("li")
+    realistic_li = current_div.find("ul", class_=StatTabs.REALISTIC.value).find_all(
+        "li"
+    )
+    sim_li = current_div.find("ul", class_=StatTabs.SIM.value).find_all("li")
+
+    lists = [arcade_li, realistic_li, sim_li]
+    stats = []
+    for li_list in lists:
+        stats.append(
+            NavalBattleStats(
+                li_list[0].text,
+                li_list[1].text,
+                li_list[2].text,
+                li_list[3].text,
+                li_list[4].text,
+                li_list[5].text,
+                li_list[6].text,
+                li_list[7].text,
+                li_list[8].text,
+                li_list[9].text,
+                li_list[10].text,
+                li_list[11].text,
+                li_list[12].text,
+                li_list[13].text,
+                li_list[14].text,
+                li_list[15].text,
+                li_list[16].text,
+                li_list[17].text,
+                li_list[18].text,
+                li_list[19].text,
+            )
+        )
+
+    stats[0].game_mode = GameMode.ARCADE
+    stats[1].game_mode = GameMode.REALISTIC
+    stats[2].game_mode = GameMode.SIM
+    return stats
 
 
 def get_user_stat(tab, html):
