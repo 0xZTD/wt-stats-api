@@ -1,3 +1,4 @@
+from enum import Enum
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -18,6 +19,13 @@ class WarThunderStats:
     air_targets_destroyed: str
     ground_targets_destroyed: str
     naval_targets_destroyed: str
+
+
+class StatTabs(Enum):
+    REALISTIC = "user-stat__list historyFightTab"
+    # first tab has is-visible class by default for some reason
+    ARCADE = "user-stat__list arcadeFightTab is-visible"
+    SIM = "user-stat__list simulationFightTab"
 
 
 BASE_URL = "https://warthunder.com"
@@ -88,17 +96,23 @@ def visit_user_page(player_link):
         EC.visibility_of_element_located((By.CLASS_NAME, "user-profile__data-nick"))
     )
     html = driver.page_source
-    soup = BeautifulSoup(html, "html.parser")
-    # TODO: parse each section of stats page in its own function,
-    # create data classes for each section if appropriate
 
-    # css class for realistic battles, air and ground combined
-    # stats structure is same for sim and arcade
-    ul = soup.find("ul", class_="user-stat__list historyFightTab")
+    stats = []
+    arcade_stats = get_user_stat(StatTabs.ARCADE, html)
+    realistic_stats = get_user_stat(StatTabs.REALISTIC, html)
+    sim_stats = get_user_stat(StatTabs.SIM, html)
+    stats.extend([arcade_stats, realistic_stats, sim_stats])
+
+    return stats
+
+
+def get_user_stat(tab, html):
+    soup = BeautifulSoup(html, "html.parser")
+    ul = soup.find("ul", class_=tab.value)
     li_list = ul.find_all("li")
 
     # each li has no distinct css class, so just indexing
-    realistic_stats = WarThunderStats(
+    stats = WarThunderStats(
         li_list[1].text,
         li_list[2].text,
         li_list[3].text,
@@ -109,10 +123,11 @@ def visit_user_page(player_link):
         li_list[8].text,
         li_list[9].text,
     )
-    return realistic_stats
+    return stats
 
 
 if __name__ == "__main__":
-    choice = get_player_link("ztdd")
-    link = get_correct_name(choice)
-    print(visit_user_page(link))
+    test_link = "/community/userinfo/?nick=ztdd%231"
+    # choice = get_player_link("ztdd")
+    # link = get_correct_name(choice)
+    print(visit_user_page(test_link))
