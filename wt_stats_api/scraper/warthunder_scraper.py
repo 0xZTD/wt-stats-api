@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Optional
+from typing import List, Optional
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -136,7 +136,7 @@ headers = {
 
 
 # --- Main logic ---
-def get_player_link(name):
+def get_player_link(name: str) -> dict:
     links_map = {}
     driver = uc.Chrome(headless=False)
 
@@ -155,7 +155,7 @@ def get_player_link(name):
     return links_map
 
 
-def get_correct_name(links_map):
+def get_correct_name(links_map: dict) -> str:
     print("Pick correct name:")
     iter = 1
     for name, link in links_map.items():
@@ -171,7 +171,7 @@ def get_correct_name(links_map):
     return None
 
 
-def get_user_pick(range):
+def get_user_pick(range: int) -> int:
     while True:
         try:
             pick = input(f"\nInput correct number, between 1 and {range}:")
@@ -184,7 +184,7 @@ def get_user_pick(range):
             print("\nOnly correct numbers allowed, try again.")
 
 
-def visit_user_page(player_link):
+def visit_user_page(player_link: str) -> list:
     driver = uc.Chrome(headless=False)
 
     driver.get(BASE_URL + player_link)
@@ -197,11 +197,8 @@ def visit_user_page(player_link):
 
     stats = []
     arcade_stats = get_user_stat(StatTabs.ARCADE, html)
-    arcade_stats.game_mode = GameMode.ARCADE
     realistic_stats = get_user_stat(StatTabs.REALISTIC, html)
-    realistic_stats.game_mode = GameMode.REALISTIC
     sim_stats = get_user_stat(StatTabs.SIM, html)
-    sim_stats.game_mode = GameMode.SIM
     ground_stats = get_ground_stats(html)
     air_stats = get_air_stats(html)
     naval_stats = get_naval_stats(html)
@@ -212,7 +209,7 @@ def visit_user_page(player_link):
     return stats
 
 
-def get_air_stats(html):
+def get_air_stats(html: str) -> List[AirBattleStats]:
     soup = BeautifulSoup(html, "html.parser")
     div = soup.find("div", class_="user-rate__fightType")
 
@@ -245,7 +242,7 @@ def get_air_stats(html):
     return stats
 
 
-def get_ground_stats(html):
+def get_ground_stats(html: str) -> List[GroundBattleStats]:
     soup = BeautifulSoup(html, "html.parser")
     div = soup.find("div", class_="user-rate__fightType")
     current_div = div.find_all("div", class_="user-stat__list-row")[1]
@@ -283,7 +280,7 @@ def get_ground_stats(html):
     return stats
 
 
-def get_naval_stats(html):
+def get_naval_stats(html: str) -> List[NavalBattleStats]:
     soup = BeautifulSoup(html, "html.parser")
     div = soup.find("div", class_="user-rate__fightType")
     current_div = div.find_all("div", class_="user-stat__list-row")[2]
@@ -328,7 +325,7 @@ def get_naval_stats(html):
     return stats
 
 
-def get_user_stat(tab, html):
+def get_user_stat(tab: StatTabs, html: str) -> WarThunderStats:
     soup = BeautifulSoup(html, "html.parser")
     ul = soup.find("ul", class_=tab.value)
     li_list = ul.find_all("li")
@@ -345,6 +342,14 @@ def get_user_stat(tab, html):
         li_list[8].text,
         li_list[9].text,
     )
+    match (tab):
+        case tab.ARCADE:
+            stats.game_mode = GameMode.ARCADE
+        case tab.REALISTIC:
+            stats.game_mode = GameMode.REALISTIC
+        case tab.SIM:
+            stats.game_mode = GameMode.SIM
+
     return stats
 
 
