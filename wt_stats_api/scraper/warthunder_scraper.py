@@ -21,6 +21,64 @@ class WarThunderStats:
     naval_targets_destroyed: str
 
 
+@dataclass
+class AirBattleStats:
+    air_battles: str
+    air_battles_fighter: str
+    air_battles_bomber: str
+    air_battles_attacker: str
+    time_played_air_battles: str
+    time_played_fighter: str
+    time_played_bomber: str
+    time_played_attacker: str
+    total_targets_destroyed: str
+    air_targets_destroyed: str
+    ground_targets_destroyed: str
+    naval_targets_destroyed: str
+
+
+@dataclass
+class GroundBattleStats:
+    ground_battles: str
+    ground_battles_tank: str
+    ground_battles_spg: str
+    ground_battles_heavy_tank: str
+    ground_battles_spaa: str
+    time_played_ground_battles: str
+    tank_battle_time: str
+    tank_destroyer_battle_time: str
+    heavy_tank_battle_time: str
+    spaa_battle_time: str
+    total_targets_destroyed: str
+    air_targets_destroyed: str
+    ground_targets_destroyed: str
+    naval_targets_destroyed: str
+
+
+@dataclass
+class NavalBattleStats:
+    naval_battles: str
+    ship_battles: str
+    motor_torpedo_boat_battles: str
+    motor_gun_boat_battles: str
+    motor_torpedo_gun_boat_battles: str
+    sub_chaser_battles: str
+    destroyer_battles: str
+    naval_ferry_barge_battles: str
+    time_played_naval: str
+    time_played_ship: str
+    time_played_motor_torpedo_boat: str
+    time_played_motor_gun_boat: str
+    time_played_motor_torpedo_gun_boat: str
+    time_played_sub_chaser: str
+    time_played_destroyer: str
+    time_played_naval_ferry_barge: str
+    total_targets_destroyed: str
+    air_targets_destroyed: str
+    ground_targets_destroyed: str
+    naval_targets_destroyed: str
+
+
 class StatTabs(Enum):
     REALISTIC = "user-stat__list historyFightTab"
     # first tab has is-visible class by default for some reason
