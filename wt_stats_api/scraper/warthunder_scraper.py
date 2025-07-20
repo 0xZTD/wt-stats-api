@@ -79,6 +79,27 @@ class NavalBattleStats:
     naval_targets_destroyed: str
 
 
+@dataclass
+class NationStats:
+    vehicles_total: str
+    vehicles_spaded: str
+    rewards: str
+
+
+@dataclass
+class NationVehiclesRewards:
+    usa: NationStats
+    ussr: NationStats
+    great_britain: NationStats
+    germany: NationStats
+    japan: NationStats
+    italy: NationStats
+    france: NationStats
+    china: NationStats
+    sweden: NationStats
+    israel: NationStats
+
+
 class StatTabs(Enum):
     REALISTIC = "user-stat__list historyFightTab"
     # first tab has is-visible class by default for some reason
