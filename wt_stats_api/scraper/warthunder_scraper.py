@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 from dataclasses import dataclass
 
 
+# --- Data Structures ---
 # WarThunderStats is general stats class, not detailed stat per game mode
 @dataclass
 class WarThunderStats:
@@ -107,6 +108,12 @@ class StatTabs(Enum):
     SIM = "user-stat__list simulationFightTab"
 
 
+class AirStatTabs(Enum):
+    REALISTIC = ""
+    ARCADE = "user-stat__list arcadeFightTab is-visible"
+    SIM = ""
+
+
 BASE_URL = "https://warthunder.com"
 SEARCH_URL = "https://warthunder.com/en/community/searchplayers"
 SEARCH_LINK = SEARCH_URL + "?name="
@@ -117,6 +124,7 @@ headers = {
 }
 
 
+# --- Main logic ---
 def get_player_link(name):
     links_map = {}
     driver = uc.Chrome(headless=False)
@@ -124,7 +132,7 @@ def get_player_link(name):
     driver.get(SEARCH_LINK + name)
 
     wait = WebDriverWait(driver, 15)  # Maximum wait time of 15 seconds
-    element = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "scp_td2")))
+    wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "scp_td2")))
     html = driver.page_source
     soup = BeautifulSoup(html, "html.parser")
     for td in soup.find_all("td", class_="scp_td2"):
@@ -180,9 +188,53 @@ def visit_user_page(player_link):
     arcade_stats = get_user_stat(StatTabs.ARCADE, html)
     realistic_stats = get_user_stat(StatTabs.REALISTIC, html)
     sim_stats = get_user_stat(StatTabs.SIM, html)
-    stats.extend([arcade_stats, realistic_stats, sim_stats])
+    ground_stats = get_ground_stats(html)
+    air_stats = get_air_stats(html)
+    naval_stats = get_naval_stats(html)
+    stats.extend(
+        [arcade_stats, realistic_stats, sim_stats, ground_stats, air_stats, naval_stats]
+    )
 
     return stats
+
+
+def get_air_stats(html):
+    soup = BeautifulSoup(html, "html.parser")
+    div = soup.find("div", class_="user-rate__fightType")
+
+    arcade_li = div.find("ul", class_=StatTabs.ARCADE.value).find_all("li")
+    realistic_li = div.find("ul", class_=StatTabs.REALISTIC.value).find_all("li")
+    sim_li = div.find("ul", class_=StatTabs.SIM.value).find_all("li")
+
+    lists = [arcade_li, realistic_li, sim_li]
+    stats = []
+    for li_list in lists:
+        stats.append(
+            AirBattleStats(
+                li_list[0].text,
+                li_list[1].text,
+                li_list[2].text,
+                li_list[3].text,
+                li_list[4].text,
+                li_list[5].text,
+                li_list[6].text,
+                li_list[7].text,
+                li_list[8].text,
+                li_list[9].text,
+                li_list[10].text,
+                li_list[11].text,
+            )
+        )
+
+    return stats
+
+
+def get_ground_stats(html):
+    pass
+
+
+def get_naval_stats(html):
+    pass
 
 
 def get_user_stat(tab, html):
@@ -203,6 +255,10 @@ def get_user_stat(tab, html):
         li_list[9].text,
     )
     return stats
+
+
+def get_vehicles_stat():
+    pass
 
 
 if __name__ == "__main__":
