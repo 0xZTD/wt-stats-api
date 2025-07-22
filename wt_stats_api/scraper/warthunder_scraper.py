@@ -374,8 +374,8 @@ def get_nations_stats(html: str) -> List[NationStats]:
 
 
 def run():
-    # test_link = "/community/userinfo/?nick=ztdd%231"
-    choice = get_player_link("ztdd")
+    name = input("Specify name for search:\n")
+    choice = get_player_link(name)
     link = get_correct_name(choice)
     print(visit_user_page(link))
 
