@@ -373,6 +373,13 @@ def get_nations_stats(html: str) -> List[NationStats]:
     return nations
 
 
+def run():
+    # test_link = "/community/userinfo/?nick=ztdd%231"
+    choice = get_player_link("ztdd")
+    link = get_correct_name(choice)
+    print(visit_user_page(link))
+
+
 if __name__ == "__main__":
     test_link = "/community/userinfo/?nick=ztdd%231"
     # choice = get_player_link("ztdd")
