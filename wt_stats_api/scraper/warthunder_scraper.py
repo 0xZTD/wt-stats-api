@@ -163,7 +163,7 @@ def get_user_pick(range: int) -> int:
         try:
             pick = input(f"\nInput correct number, between 1 and {range}:")
             pick = int(pick)
-            if pick < 0 or pick >= range:
+            if pick < 0 or pick > range:
                 print("\nSpecify correct range")
                 continue
             return pick
