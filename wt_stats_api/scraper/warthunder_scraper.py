@@ -93,23 +93,10 @@ class NavalBattleStats:
 
 @dataclass
 class NationStats:
+    nation: str
     vehicles_total: str
     vehicles_spaded: str
     rewards: str
-
-
-@dataclass
-class NationVehiclesRewards:
-    usa: NationStats
-    ussr: NationStats
-    great_britain: NationStats
-    germany: NationStats
-    japan: NationStats
-    italy: NationStats
-    france: NationStats
-    china: NationStats
-    sweden: NationStats
-    israel: NationStats
 
 
 class StatTabs(Enum):
@@ -202,8 +189,17 @@ def visit_user_page(player_link: str) -> list:
     ground_stats = get_ground_stats(html)
     air_stats = get_air_stats(html)
     naval_stats = get_naval_stats(html)
+    nations_stats = get_nations_stats(html)
     stats.extend(
-        [arcade_stats, realistic_stats, sim_stats, ground_stats, air_stats, naval_stats]
+        [
+            arcade_stats,
+            realistic_stats,
+            sim_stats,
+            ground_stats,
+            air_stats,
+            naval_stats,
+            nations_stats,
+        ]
     )
 
     return stats
@@ -353,8 +349,28 @@ def get_user_stat(tab: StatTabs, html: str) -> WarThunderStats:
     return stats
 
 
-def get_vehicles_stat():
-    pass
+def get_nations_stats(html: str) -> List[NationStats]:
+    soup = BeautifulSoup(html, "html.parser")
+    # wrapper div
+    div = soup.find("div", class_="user-profile__score user-score")
+    ul_titles = div.find("ul", class_="user-score__list-title")
+    ul_total_vehicles = ul_titles.find_next_sibling("ul")
+    ul_spaded_vehicles = ul_total_vehicles.find_next_sibling("ul")
+    ul_awards = ul_spaded_vehicles.find_next_sibling("ul")
+
+    nations: List[NationStats] = []
+    for i in range(1, len(ul_titles.find_all("li"))):
+        nations.append(
+            NationStats(
+                ul_titles.find_all("li")[i].text,
+                ul_total_vehicles.find_all("li")[i].text,
+                ul_spaded_vehicles.find_all("li")[i].text,
+                ul_awards.find_all("li")[i].text,
+            )
+        )
+        pass
+
+    return nations
 
 
 if __name__ == "__main__":
