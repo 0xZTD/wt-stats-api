@@ -1,13 +1,12 @@
 # Use official Python base image (slim is smaller, security-focused)
 FROM python:3.11-slim
 
-# Install system dependencies for Chrome, Xvfb, and basic tools
-# Combine apt commands to minimize image layers
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         ca-certificates \
         fonts-liberation \
         wget \
+        gnupg2 \
         xvfb \
         && \
     wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
