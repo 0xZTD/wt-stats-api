@@ -1,4 +1,3 @@
-# Use official Python base image (slim is smaller, security-focused)
 FROM python:3.11-slim
 
 RUN apt-get update && \
