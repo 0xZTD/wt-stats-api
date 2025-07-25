@@ -1,13 +1,12 @@
 from fastapi import APIRouter, HTTPException
-
-from wt_stats_api.runner.warthunder_scraper_runner import get_player_link
+from wt_stats_api.runner import warthunder_scraper_runner
 
 router = APIRouter()
 
 
 @router.get("/search")
 def search_endpoint(q: str):
-    results = get_player_link(q)
+    results = warthunder_scraper_runner.get_player_link(q)
     if not results:
         raise HTTPException(status_code=404, detail="No results found")
     return {"results": results}
@@ -15,4 +14,8 @@ def search_endpoint(q: str):
 
 @router.get("/stats")
 def stats_endpoint(url: str):
-    pass
+    url = url.strip('"').replace("#", "%23")
+    results = warthunder_scraper_runner.get_user_stats_by_url(url)
+    if not results:
+        raise HTTPException(status_code=404, detail="No results found")
+    return {"results": results}
