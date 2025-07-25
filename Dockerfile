@@ -27,6 +27,6 @@ USER appuser
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy project files (as non-root)
-COPY --chown=appuser wt_stats_api/ .
+COPY --chown=appuser wt_stats_api/ wt_stats_api/
 
-CMD ["python", "-m","runner.warthunder_scraper_runner"]
+CMD ["python", "-m","wt_stats_api.runner.warthunder_scraper_runner"]
