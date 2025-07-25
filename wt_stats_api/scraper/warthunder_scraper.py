@@ -201,7 +201,7 @@ def visit_user_page(player_link: str) -> list:
             nations_stats,
         ]
     )
-
+    driver.close()
     return stats
 
 
