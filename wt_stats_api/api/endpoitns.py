@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 
-from wt_stats_api.scraper.warthunder_scraper import get_player_link
+from wt_stats_api.runner.warthunder_scraper_runner import get_player_link
 
 router = APIRouter()
 
