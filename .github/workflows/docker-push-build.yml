@@ -24,6 +24,6 @@ jobs:
       - name: Build and Push
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: wt_stats_api
           push: true
           tags: zeth5/wt-stats:dev
