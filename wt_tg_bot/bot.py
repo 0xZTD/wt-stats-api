@@ -13,8 +13,7 @@ from telegram.ext import (
 )
 
 load_dotenv()
-API_URL = "http://127.0.0.1:8650"
-
+API_URL = os.getenv("API_URL")
 TOKEN = os.getenv("BOT_TOKEN")
 # In-memory user storage for demo
 user_data = {}
