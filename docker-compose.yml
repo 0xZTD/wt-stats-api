@@ -1,0 +1,26 @@
+services:
+  api:
+    build: ./wt_stats_api
+    image: zeth5/wt-stats:dev
+    container_name: wt-api
+    restart: unless-stopped
+    networks:
+      - backend
+
+  telegram-bot:
+    build: ./wt_tg_bot
+    image: zeth5/wt-stats-bot:dev
+    container_name: wt-tg-bot
+    restart: unless-stopped
+    env_file:
+      - ./wt_tg_bot/.env
+    environment:
+      - API_URL=http://api:8650
+    depends_on:
+      - api
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
