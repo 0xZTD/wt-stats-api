@@ -21,9 +21,16 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and Push
+      - name: Build and Push api
         uses: docker/build-push-action@v6
         with:
           context: wt_stats_api
           push: true
           tags: zeth5/wt-stats:dev
+
+      - name: Build and Push bot
+        uses: docker/build-push-action@v6
+        with:
+          context: wt_tg_bot
+          push: true
+          tags: zeth5/wt-stats-bot:dev
