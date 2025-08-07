@@ -232,7 +232,10 @@ def get_air_stats(html: str) -> List[AirBattleStats]:
     stats[0].game_mode = GameMode.ARCADE
     stats[1].game_mode = GameMode.REALISTIC
     stats[2].game_mode = GameMode.SIM
-    return stats
+
+    keys = ["AirArcade", "AirRealistic", "AirSim"]
+    dict_stats = dict(zip(keys, stats))
+    return dict_stats
 
 
 def get_ground_stats(html: str) -> List[GroundBattleStats]:
@@ -270,7 +273,9 @@ def get_ground_stats(html: str) -> List[GroundBattleStats]:
     stats[0].game_mode = GameMode.ARCADE
     stats[1].game_mode = GameMode.REALISTIC
     stats[2].game_mode = GameMode.SIM
-    return stats
+    keys = ["GroundArcade", "GroundRealistic", "GroundSim"]
+    dict_stats = dict(zip(keys, stats))
+    return dict_stats
 
 
 def get_naval_stats(html: str) -> List[NavalBattleStats]:
@@ -315,7 +320,9 @@ def get_naval_stats(html: str) -> List[NavalBattleStats]:
     stats[0].game_mode = GameMode.ARCADE
     stats[1].game_mode = GameMode.REALISTIC
     stats[2].game_mode = GameMode.SIM
-    return stats
+    keys = ["NavalArcade", "NavalRealistic", "NavalSim"]
+    dict_stats = dict(zip(keys, stats))
+    return dict_stats
 
 
 def get_user_stat(tab: StatTabs, html: str) -> WarThunderStats:

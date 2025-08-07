@@ -1,8 +1,7 @@
 docker-api-build:
 	docker build -t zeth5/wt-stats:dev -f wt_stats_api/Dockerfile wt_stats_api/
-	docker push zeth5/wt-stats:dev
 
-api-run:
+api-run: docker-api-build
 	docker run --rm -p 8650:8650 zeth5/wt-stats:dev
 
 docker-bot-build:
