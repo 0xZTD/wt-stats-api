@@ -366,7 +366,7 @@ def get_nations_stats(html: str) -> List[NationStats]:
     for i in range(1, len(ul_titles.find_all("li"))):
         nations.append(
             NationStats(
-                ul_titles.find_all("li")[i].text,
+                ul_titles.find_all("li")[i].text.strip(),
                 ul_total_vehicles.find_all("li")[i].text,
                 ul_spaded_vehicles.find_all("li")[i].text,
                 ul_awards.find_all("li")[i].text,
