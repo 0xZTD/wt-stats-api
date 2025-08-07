@@ -10,3 +10,6 @@ docker-bot-build:
 
 bot-run:
 	docker run --rm --env-file wt_tg_bot/.env zeth5/wt-stats-bot:dev
+
+compose-run:
+	docker compose up --build

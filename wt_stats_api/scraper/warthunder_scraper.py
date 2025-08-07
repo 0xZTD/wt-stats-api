@@ -182,7 +182,6 @@ def visit_user_page(player_link: str) -> list:
     )
     html = driver.page_source
 
-    stats = []
     arcade_stats = get_user_stat(StatTabs.ARCADE, html)
     realistic_stats = get_user_stat(StatTabs.REALISTIC, html)
     sim_stats = get_user_stat(StatTabs.SIM, html)
@@ -190,17 +189,15 @@ def visit_user_page(player_link: str) -> list:
     air_stats = get_air_stats(html)
     naval_stats = get_naval_stats(html)
     nations_stats = get_nations_stats(html)
-    stats.extend(
-        [
-            arcade_stats,
-            realistic_stats,
-            sim_stats,
-            ground_stats,
-            air_stats,
-            naval_stats,
-            nations_stats,
-        ]
-    )
+    stats = {
+        "ArcadeStats": arcade_stats,
+        "RealisticStats": realistic_stats,
+        "SimStats": sim_stats,
+        "GroundStats": ground_stats,
+        "AirStats": air_stats,
+        "NavalStats": naval_stats,
+        "Nations": nations_stats,
+    }
     driver.close()
     return stats
 
