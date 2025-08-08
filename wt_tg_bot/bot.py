@@ -34,10 +34,51 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("You have not picked anything yet. Use /start.")
         return
     resp = requests.get(f"{API_URL}/stats", params={"url": chosen})
-    data = resp.json()["results"]
+    results = resp.json()["results"]
     # TODO: add formating
     # now returns just general stats for ground realistic
-    await update.message.reply_text(f"Raw stats JSON:\n{data[1]}")
+
+    ground = await format_ground(results["ground_stats"]["ground_realistic"])
+    await update.message.reply_text(ground)
+
+
+async def format_ground(d):
+    game_mode = d.get("game_mode", "unknown")
+    total_battles = d.get("ground_battles")
+    total_targets = d.get("total_targets_destroyed")
+    air_targets = d.get("air_targets_destroyed")
+    ground_targets = d.get("ground_targets_destroyed")
+    naval_targets = d.get("naval_targets_destroyed")
+
+    time_ground = d.get("time_played_ground_battles", "N/A")
+    time_tank = d.get("tank_battle_time", "N/A")
+    time_td = d.get("tank_destroyer_battle_time", "N/A")
+    time_heavy = d.get("heavy_tank_battle_time", "N/A")
+    time_spaa = d.get("spaa_battle_time", "N/A")
+
+    battles_tank = d.get("ground_battles_tank")
+    battles_spg = d.get("ground_battles_spg")
+    battles_heavy = d.get("ground_battles_heavy_tank")
+    battles_spaa = d.get("ground_battles_spaa")
+
+    lines = []
+    lines.append(f"Mode: {game_mode.capitalize()} (Ground)")
+    lines.append("")
+    lines.append("General")
+    lines.append(f"- Ground battles: {total_battles}")
+    lines.append(f"- Time played (ground): {time_ground}")
+    lines.append(f"- Targets destroyed: {total_targets}")
+    lines.append(f"  -  Air: {air_targets}")
+    lines.append(f"  -  Ground: {ground_targets}")
+    lines.append(f"  -  Naval: {naval_targets}")
+    lines.append("")
+    lines.append("By vehicle class")
+    lines.append(f"- Tank battles: {battles_tank} | Time: {time_tank}")
+    lines.append(f"- Tank destroyer battles: {battles_spg} | Time: {time_td}")
+    lines.append(f"- Heavy tank battles: {battles_heavy} | Time: {time_heavy}")
+    lines.append(f"- SPAA battles: {battles_spaa} | Time: {time_spaa}")
+
+    return "\n".join(lines)
 
 
 async def search_nickname(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
