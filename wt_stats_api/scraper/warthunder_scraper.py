@@ -190,13 +190,13 @@ def visit_user_page(player_link: str) -> list:
     naval_stats = get_naval_stats(html)
     nations_stats = get_nations_stats(html)
     stats = {
-        "ArcadeStats": arcade_stats,
-        "RealisticStats": realistic_stats,
-        "SimStats": sim_stats,
-        "GroundStats": ground_stats,
-        "AirStats": air_stats,
-        "NavalStats": naval_stats,
-        "Nations": nations_stats,
+        "arcade_stats": arcade_stats,
+        "realistic_stats": realistic_stats,
+        "sim_stats": sim_stats,
+        "ground_stats": ground_stats,
+        "air_stats": air_stats,
+        "naval_stats": naval_stats,
+        "nations": nations_stats,
     }
     driver.close()
     return stats
@@ -233,7 +233,7 @@ def get_air_stats(html: str) -> List[AirBattleStats]:
     stats[1].game_mode = GameMode.REALISTIC
     stats[2].game_mode = GameMode.SIM
 
-    keys = ["AirArcade", "AirRealistic", "AirSim"]
+    keys = ["air_arcade", "air_realistic", "air_sim"]
     dict_stats = dict(zip(keys, stats))
     return dict_stats
 
@@ -273,7 +273,7 @@ def get_ground_stats(html: str) -> List[GroundBattleStats]:
     stats[0].game_mode = GameMode.ARCADE
     stats[1].game_mode = GameMode.REALISTIC
     stats[2].game_mode = GameMode.SIM
-    keys = ["GroundArcade", "GroundRealistic", "GroundSim"]
+    keys = ["ground_arcade", "ground_realistic", "ground_sim"]
     dict_stats = dict(zip(keys, stats))
     return dict_stats
 
@@ -320,7 +320,7 @@ def get_naval_stats(html: str) -> List[NavalBattleStats]:
     stats[0].game_mode = GameMode.ARCADE
     stats[1].game_mode = GameMode.REALISTIC
     stats[2].game_mode = GameMode.SIM
-    keys = ["NavalArcade", "NavalRealistic", "NavalSim"]
+    keys = ["naval_arcade", "naval_realistic", "naval_sim"]
     dict_stats = dict(zip(keys, stats))
     return dict_stats
 
