@@ -36,8 +36,10 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
     resp = requests.get(f"{API_URL}/stats", params={"url": chosen})
     results = resp.json()["results"]
     # TODO: add formating
-    # now returns just general stats for ground realistic
+    # Ground, air and naval stats have different fields.
+    # general stats same fields, can be reused
 
+    # TODO: make user pick what stats to show
     ground = await format_ground(results["ground_stats"]["ground_realistic"])
     await update.message.reply_text(ground)
 
