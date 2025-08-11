@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 import requests
 import logging
-from telegram import Update, ReplyKeyboardMarkup
+from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import (
     Application,
     CommandHandler,
@@ -33,6 +33,8 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not chosen:
         await update.message.reply_text("You have not picked anything yet. Use /start.")
         return
+    await update.message.reply_chat_action(action="typing")
+
     resp = requests.get(f"{API_URL}/stats", params={"url": chosen})
     results = resp.json()["results"]
     # TODO: add formating
@@ -85,6 +87,7 @@ async def format_ground(d):
 
 async def search_nickname(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     nickname = update.message.text.strip()
+    await update.message.reply_chat_action(action="typing")
     resp = requests.get(f"{API_URL}/search", params={"q": nickname})
     data = resp.json()["results"]  # assuming it's {"nick1": "url1", ...}
 
@@ -112,7 +115,8 @@ async def pick_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
     user_id = update.effective_user.id
     user_data[user_id] = url  # Store url only!
     await update.message.reply_text(
-        f"Saved {picked_nick}! Use /stats to get your stats."
+        f"Saved {picked_nick}! Use /stats to get your stats.",
+        reply_markup=ReplyKeyboardRemove(),
     )
     return ConversationHandler.END
 
