@@ -36,6 +36,7 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_chat_action(action="typing")
 
     resp = requests.get(f"{API_URL}/stats", params={"url": chosen})
+    resp.raise_for_status()
     results = resp.json()["results"]
     # TODO: add formating
     # Ground, air and naval stats have different fields.
@@ -89,6 +90,7 @@ async def search_nickname(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     nickname = update.message.text.strip()
     await update.message.reply_chat_action(action="typing")
     resp = requests.get(f"{API_URL}/search", params={"q": nickname})
+    resp.raise_for_status()
     data = resp.json()["results"]  # assuming it's {"nick1": "url1", ...}
 
     if not data:
@@ -121,6 +123,21 @@ async def pick_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
     return ConversationHandler.END
 
 
+async def error_handler(update, context):
+    err = context.error
+    if isinstance(err, requests.HTTPError):
+        resp = err.response
+        if resp is not None and resp.status_code in (500, 503):
+            if update:
+                await update.message.reply_text("⚠️ Resource is busy. Try again later.")
+            return
+
+    # Fallback for unexpected errors
+    if update:
+        update.message.reply_text("❌ An unexpected error occurred.")
+    raise
+
+
 def main():
     app = Application.builder().token(TOKEN).build()
 
@@ -135,6 +152,7 @@ def main():
         fallbacks=[CommandHandler("start", start)],
     )
     app.add_handler(conv_handler)
+    app.add_error_handler(error_handler)
     app.add_handler(CommandHandler("stats", stats))
 
     app.run_polling()

@@ -14,6 +14,7 @@ def search_endpoint(q: str):
 
     if not results:
         raise HTTPException(status_code=404, detail="No results found")
+
     return {"results": results}
 
 
