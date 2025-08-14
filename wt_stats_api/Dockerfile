@@ -2,16 +2,11 @@ FROM python:3.11-slim
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        ca-certificates \
-        fonts-liberation \
         wget \
         gnupg2 \
         xvfb \
+        chromium \
         && \
-    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
-    sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list' && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends google-chrome-beta && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 

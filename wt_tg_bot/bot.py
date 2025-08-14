@@ -134,7 +134,7 @@ async def error_handler(update, context):
 
     # Fallback for unexpected errors
     if update:
-        update.message.reply_text("❌ An unexpected error occurred.")
+        await update.message.reply_text("❌ An unexpected error occurred.")
     raise
 
 
